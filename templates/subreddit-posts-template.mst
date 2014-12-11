@@ -7,7 +7,7 @@
 	{{#posts}}
 		<tr>
 			<td>
-				<a href="{{permalink}}">{{title}}</a>
+				<a class="permalink" href="{{permalink}}">{{title}}</a>
 			</td>
 			<td>
 				<a href="{{permalink}}">{{ups}}</a>

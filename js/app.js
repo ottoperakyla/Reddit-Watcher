@@ -10,6 +10,12 @@
 
     // get reddits saved in localstorage
     // and add them to array to iterate later
+
+    // todo: in open all hrefs only open links with safe domains
+    var safe_domains = ["reddit.com", "imgur.com"];
+
+    // todo: in open all hrefs add treshold how much points/comments to have to open
+
     var reddits_in_localstorage = [];
     var app_name = "rlt_subreddits";
     var get_imgur_links = localStorage.getItem('rlt_imgur');
@@ -91,9 +97,11 @@
                 return;
 
             console.log("open posts for", is_open_all_posts[1]);
-            var subreddit_posts_listing = $("#subreddit-listing-" + is_open_all_posts[1]);
+            var target = "#subreddit-listing-" + is_open_all_posts[1];
+            console.log(target);
+            var subreddit_posts_listing = $(target);
 
-            var posts = subreddit_posts_listing.children();
+            var posts = subreddit_posts_listing.children().find("a.permalink");
 
             posts.each(function(idx, el) {
                 window.open(posts[idx].href, "_blank");
