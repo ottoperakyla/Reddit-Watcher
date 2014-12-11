@@ -1,7 +1,9 @@
-<ul class="subreddit-listing-list">
+<ul id="subreddit-listing-{{subreddit}}" class="subreddit-listing-list text-center">
 	{{#posts}}
-		<li class="subreddit-listing-item">
-			<a href="http://reddit.com/{{permalink}}" target="_blank">{{title}}</a>
-		</li>
+		<a href="{{permalink}}" target="_blank">
+			<li class="subreddit-listing-item">
+				{{title}}
+			</li>
+		</a>
 	{{/posts}}
 </ul>

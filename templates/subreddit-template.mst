@@ -15,7 +15,8 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<button data-subreddit="{{subreddit}}" id="get-subreddit-{{subreddit}}" class="btn-block btn btn-mini btn-success get-reddit">Refresh</button>
+			<button data-subreddit="{{subreddit}}" id="get-subreddit-{{subreddit}}" class="btn btn-success form-control get-reddit">Refresh</button>
+			<button data-subreddit="{{subreddit}}" id="open-all-posts-{{subreddit}}" class="btn btn-warning form-control">Open all posts</button>
 			<button class="btn btn-danger form-control remove-single-subreddit" id="remove-{{subreddit}}">Remove</button>
 		</div>
 	</div>

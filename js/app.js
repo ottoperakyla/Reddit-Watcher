@@ -12,6 +12,10 @@
     // and add them to array to iterate later
     var reddits_in_localstorage = [];
     var app_name = "rlt_subreddits";
+    var get_imgur_links = localStorage.getItem('rlt_imgur');
+
+    if (get_imgur_links) 
+        $("#get-imgur-links").attr("checked", true);
 
     if (localStorage.getItem(app_name) != null) {
         var reddits_to_get_from_localstorage = JSON.parse(localStorage.getItem(app_name));
@@ -54,7 +58,7 @@
                 });
             }
         });
-    });
+});
 
     // todo: move all click handling here?
     $("#reddit-loader-thing").click(function(event) {
@@ -79,6 +83,36 @@
 
 	        localStorage.setItem(app_name, JSON.stringify(localstorage_subreddits));
         }
+
+        var is_open_all_posts = event.target.id.match(/open-all-posts-(\w+)/);
+
+        if (is_open_all_posts) {
+            if (!confirm("Are you sure? This will open a lot of tabs.")) 
+                return;
+
+            console.log("open posts for", is_open_all_posts[1]);
+            var subreddit_posts_listing = $("#subreddit-listing-" + is_open_all_posts[1]);
+
+            var posts = subreddit_posts_listing.children();
+
+            posts.each(function(idx, el) {
+                window.open(posts[idx].href, "_blank");
+            });
+
+        }
+
+        var is_get_imgur_links = /get-imgur-links/.test(event.target.id);
+
+        if (is_get_imgur_links) {
+            var is_true = $("#"+event.target.id).is(":checked");
+
+            if (is_true) 
+                localStorage.setItem("rlt_imgur", is_true);
+            else
+                localStorage.removeItem("rlt_imgur");
+        }
+
+        
 
     });
 
@@ -140,8 +174,8 @@
     // NOTE: it gets its argument from passed in event object!
     function get_subreddit(eventObject) {
       //  console.log(eventObject);
-        var $button = $(eventObject.data.subreddit_button);
-        var subreddit = $button[0].getAttribute('data-subreddit');
+      var $button = $(eventObject.data.subreddit_button);
+      var subreddit = $button[0].getAttribute('data-subreddit');
 
         // hot.json = newest posts
         // top.json = best subs (use ?t=hour,day,week,month,year,all parameter here)
@@ -149,35 +183,53 @@
         $button.parent().siblings().html("");
 
         $.get(subreddit_url, function(subreddit_page) {
-                var posts = subreddit_page.data.children;
-                var listing_html = "<ul class='subreddit-listing-list'>";
-                var posts_html = [];
+            var posts = subreddit_page.data.children;
+            var listing_html = "<ul class='subreddit-listing-list'>";
+            var posts_html = [];
+            var reddit_domain = "http://reddit.com";
 
-                for (var i = 0; i < posts.length; i++) {
-                    var post_data = posts[i].data;
+            for (var i = 0; i < posts.length; i++) {
+                var post_data = posts[i].data;
+
+                var link_to_push = post_data.permalink;
+
+                // todo: fix this mess...
+                // no idea why, but it works:D
+                if (get_imgur_links) {
+                    // post_data.url points directly to outside links (e.g. imgur)
 
                     posts_html.push({
-                        permalink: post_data.permalink,
+                        permalink: post_data.url,
                         title: post_data.title
                     });
 
+                    } else {
+                    posts_html.push({
+                        // need to add reddit.com since permalink is relative to reddit
+                        permalink:  reddit_domain + post_data.permalink,
+                        title: post_data.title
+                    });
                 }
 
-                $.get('templates/subreddit-posts-template.mst', function(template) {
-                    var rendered = Mustache.render(template, {
-                        posts: posts_html
-                    });
+            }
 
-                    $button.parent().parent().siblings().find(".subreddit-listing").html(rendered);
+            $.get('templates/subreddit-posts-template.mst', function(template) {
+
+                var rendered = Mustache.render(template, {
+                    subreddit: subreddit,
+                    posts: posts_html
                 });
 
-            })
-            .fail(function(data) {
-                alert("Error: Could not load subreddit '" + subreddit + "'");
+                $button.parent().parent().siblings().find(".subreddit-listing").html(rendered);
             });
-    }
 
-    function add_subreddit_to_dom(subreddit) {
+        })
+.fail(function(data) {
+    alert("Error: Could not load subreddit '" + subreddit + "'");
+});
+}
+
+function add_subreddit_to_dom(subreddit) {
     	// todo: move subreddit adding logic here
     }
 
