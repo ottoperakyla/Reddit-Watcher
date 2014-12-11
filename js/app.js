@@ -176,41 +176,43 @@
     function get_subreddit(eventObject) {
         // todo: fix this whole mess
         // using the same $.get calls twice... :(
-        if (arguments.length == 2) {
-            var subreddit = arguments[0];
-            var $list_to_sort = $("#subreddit-listing-"+arguments[0]);
+            if (arguments.length == 2) {
+                var subreddit = arguments[0];
+                var $list_to_sort = $("#subreddit-listing-"+arguments[0]);
 
-            $.get("http://www.reddit.com/r/"+arguments[0]+"/top.json?t="+arguments[1], function(subreddit_posts) {
-               
-               var posts = subreddit_posts.data.children;
-               var posts_html = [];
+                $.get("http://www.reddit.com/r/"+arguments[0]+"/top.json?t="+arguments[1], function(subreddit_posts) {
 
-               for (var i = 0; i < posts.length; i++) {
-                console.log(posts[i])
+                   var posts = subreddit_posts.data.children;
+                   var posts_html = [];
+
+                   for (var i = 0; i < posts.length; i++) {
+                    console.log(posts[i])
                     posts_html.push({
                         permalink: posts[i].data.url,
-                        title: posts[i].data.title
+                        title: posts[i].data.title,
+                        num_comments: posts[i].data.num_comments,
+                        ups: posts[i].data.ups
                     });
-                   console.log(posts[i].data.url);
-               }
+                    console.log(posts[i].data.url);
+                }
 
 
-            $.get('templates/subreddit-posts-template.mst', function(template) {
-                console.log("subr:", subreddit, "posts html:",posts_html);
+                $.get('templates/subreddit-posts-template.mst', function(template) {
+                    console.log("subr:", subreddit, "posts html:",posts_html);
 
-                var rendered = Mustache.render(template, {
-                    subreddit: subreddit,
-                    posts: posts_html
+                    var rendered = Mustache.render(template, {
+                        subreddit: subreddit,
+                        posts: posts_html
+                    });
+
+
+                    var target = "#subreddit-listing-" + subreddit;
+                    $(target).html(rendered);
+
+
                 });
 
-
-                 var target = "#subreddit-listing-" + subreddit;
-                 $(target).html(rendered);
-
-
-            });
-
-               console.log(subreddit_posts.data.children);
+                console.log(subreddit_posts.data.children);
 
             }).fail(function(error){
                 console.log("error", error);
@@ -220,7 +222,7 @@
 
             return;
         }
-     
+
       //  console.log(eventObject);
       var $button = $(eventObject.data.subreddit_button);
       var subreddit = $button[0].getAttribute('data-subreddit');
@@ -240,6 +242,8 @@
             for (var i = 0; i < posts.length; i++) {
                 var post_data = posts[i].data;
 
+                console.log(post_data);
+
                 var link_to_push = post_data.permalink;
 
                 // todo: fix this mess...
@@ -247,16 +251,25 @@
                 if (get_imgur_links) {
                     // post_data.url points directly to outside links (e.g. imgur)
 
-                    posts_html.push({
+                    var to_push = {
                         permalink: post_data.url,
-                        title: post_data.title
-                    });
+                        title: post_data.title,
+                        num_comments: post_data.num_comments,
+                        ups: post_data.ups
+                    };
 
-                    } else {
+
+                    posts_html.push(to_push);
+
+                    console.log("pushed", to_push);
+
+                } else {
                     posts_html.push({
                         // need to add reddit.com since permalink is relative to reddit
                         permalink:  reddit_domain + post_data.permalink,
-                        title: post_data.title
+                        title: post_data.title,
+                          num_comments: post_data.num_comments,
+                        ups: post_data.ups
                     });
                 }
 
@@ -268,6 +281,9 @@
                     subreddit: subreddit,
                     posts: posts_html
                 });
+
+                console.log(posts_html);
+                console.log(rendered);
 
                 $button.parent().parent().siblings().find(".subreddit-listing").html(rendered);
             });
@@ -309,14 +325,14 @@ function add_subreddit_to_dom(subreddit) {
           // hot.json = newest posts
         // top.json = best subs (use ?t=hour,day,week,month,year,all parameter here)
       //  $("#"+subreddit).html("");
-    }
+  }
 
-    function sort_all_subreddits(sort_by) {
-        var subreddits = "";
+  function sort_all_subreddits(sort_by) {
+    var subreddits = "";
 
-        for (var i = 0; i < subreddits.length; i++) {
-            sort_single_subreddit(subreddits[i], sort_by);
-        }
+    for (var i = 0; i < subreddits.length; i++) {
+        sort_single_subreddit(subreddits[i], sort_by);
     }
+}
 
 }());
