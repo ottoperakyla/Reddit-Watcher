@@ -42,6 +42,7 @@
                 // todo: init subreddits loaded from localstorage also
                 console.log(subreddits_to_add[i]);
 
+                // also load reddits on page init
                 // todo: lol... fix this
                 get_subreddit({
                     data: {
@@ -115,6 +116,10 @@
             // remove from local storage
             localStorage.removeItem(app_name);
         }
+    });
+
+    $("#refresh-all-reddits").click(function(event) {
+        // todo: get new json and render again here
     });
 
     // gets posts for a subreddit
