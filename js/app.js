@@ -90,36 +90,6 @@
 
     }
 
-    if (window.location.search) {
-        var queryparams = window.location.search.match(/\?reddits=([\w,]+)/);
-
-        if (queryparams) {
-            queryparams = queryparams[1].split(",");
-            console.log("queryparams is", queryparams);
-            // todo remove localstorage items here
-            // and load the reddits given in queryparameter
-            if (localStorage.getItem(app_name)) {
-                localStorage.removeItem(app_name);
-            }
-
-            for (var i = 0; i < queryparams.length; i++) {
-                $.get("http://www.reddit.com/r/" + queryparams[i] + "/hot.json", function(subreddit) {
-                    // process subreddit here and append to dom
-                    for (var i = 0; i < subreddit.data.children.length; i++) {
-                        console.log(subreddit.data.children[i]);
-                    }
- 
-                })
-                .fail(function(error) {
-                    alert(error);
-                });
-            }
-
-        }
-
-
-    }
-
     var reddits_in_localstorage = [];
     var app_name = "rlt_subreddits";
     var get_imgur_links = localStorage.getItem('rlt_imgur');
