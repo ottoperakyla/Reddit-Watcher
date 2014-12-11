@@ -1,0 +1,28 @@
+{
+  "name": "reddit loader thing",
+  "version": "0.0.0",
+  "homepage": "https://github.com/stilez1/reddit_loader_thing",
+  "description": "loads things from reddit",
+  "main": "index.html",
+  "keywords": [
+    "reddit",
+    "subreddits"
+  ],
+  "authors": [
+    "Otto Peräkylä"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "*",
+    "jquery": "*",
+    "mustache": "*"
+  }
+}

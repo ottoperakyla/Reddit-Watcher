@@ -1,0 +1,15 @@
+<div class="col-md-3 subreddit-section" id="subreddit-{{subreddit}}">
+	<div class="row text-center">
+		<h2>/r/{{subreddit}}</h2>
+		<button class="btn btn-mini btn-danger remove-single-subreddit" id="remove-{{subreddit}}">Remove</button>
+	</div>
+	<div class="row">
+		<div class="col-md-12 subreddit-listing"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<input type="text" class="subreddit text-center form-control" value="{{subreddit}}" />
+			<button id="get-subreddit-{{subreddit}}" class="btn-block btn btn-mini btn-success get-reddit">Load</button>
+		</div>
+	</div>
+</div>

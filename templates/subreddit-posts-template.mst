@@ -1,0 +1,7 @@
+<ul class="subreddit-listing-list">
+	{{#posts}}
+		<li class="subreddit-listing-item">
+			<a href="http://reddit.com/{{permalink}}" target="_blank">{{title}}</a>
+		</li>
+	{{/posts}}
+</ul>

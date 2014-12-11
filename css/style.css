@@ -1,0 +1,32 @@
+.current-reddits {
+	padding: 40px 0;
+}
+
+.subreddit-listing {
+	height: 400px;
+	overflow: auto;
+}
+
+.subreddit-listing-list {
+	list-style-type: none;
+	padding: 0;
+}
+
+.subreddit-listing-item {
+	margin-bottom: 5px;
+}
+
+.icon-add-reddit {
+	color: green;
+	font-size: 20px;
+}
+
+a#add-reddit {
+	text-decoration: none !important;
+	position: absolute;
+	top: 20px;
+}
+
+input, button {
+	margin: 5px 0 !important;
+}
