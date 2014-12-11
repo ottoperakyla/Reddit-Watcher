@@ -24,7 +24,17 @@
 								<button id="add-reddit" class="btn btn-success form-control">Add new reddit</button>
 							</form>
 							<button id="refresh-all-reddits" class="btn btn-success form-control">Refresh all reddits</button>
-							<button id="remove-all-reddits" class="btn btn-danger form-control">Remove all reddits</button>
+							<form action="#" class="text-center">
+								<label for="sort_all">Sort all by:</label>
+								<select class="form-control" name="sort_all" id="sort-all-subreddits">
+									<option value="new">New</option>
+									<option value="top_all_time">Top: all time</option>
+									<option value="top_year">Top: year</option>
+									<option value="top_month">Top: month</option>
+									<option value="top_week">Top: week</option>
+								</select>
+							</form>
+							<button id="remove-all-reddits" class="btn btn-danger form-control mt-40">Remove all reddits</button>
 						</div>
 					</div>
 					<div class="current-reddits row">

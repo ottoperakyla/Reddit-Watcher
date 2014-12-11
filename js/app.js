@@ -1,4 +1,7 @@
 (function() {
+    // todo first: subreddits sometimes appear
+    // on page load even when they were deleted first
+
     // todo: subreddit adding logic is in two places
     // when first loading them from local storage 
     // and when adding a new one
@@ -40,7 +43,7 @@
                 }, get_subreddit);
 
                 // todo: init subreddits loaded from localstorage also
-                console.log(subreddits_to_add[i]);
+                //console.log(subreddits_to_add[i]);
 
                 // also load reddits on page init
                 // todo: lol... fix this
@@ -72,13 +75,18 @@
 	        		localstorage_subreddits.splice(i, 1);
 	        }
 
-	        console.log(JSON.stringify(localstorage_subreddits));
+	        //console.log(JSON.stringify(localstorage_subreddits));
 
 	        localStorage.setItem(app_name, JSON.stringify(localstorage_subreddits));
         }
 
-
     });
+
+    // todo: do sorting for single subreddits and all subreddits here
+    $("#reddit-loader-thing").change(function(event) {
+        sort_single_subreddit(event.target.id, event.target.value);
+    });
+
 
     // add a section for a new subreddit
     $("#add-reddit").click(function(event) {
@@ -131,11 +139,13 @@
     // gets posts for a subreddit
     // NOTE: it gets its argument from passed in event object!
     function get_subreddit(eventObject) {
-        console.log(eventObject);
+      //  console.log(eventObject);
         var $button = $(eventObject.data.subreddit_button);
+        var subreddit = $button[0].getAttribute('data-subreddit');
 
-        var subreddit = $button.siblings("input").val();
-        var subreddit_url = "http://www.reddit.com/r/" + subreddit + "/new.json";
+        // hot.json = newest posts
+        // top.json = best subs (use ?t=hour,day,week,month,year,all parameter here)
+        var subreddit_url = "http://www.reddit.com/r/" + subreddit + "/hot.json";
         $button.parent().siblings().html("");
 
         $.get(subreddit_url, function(subreddit_page) {
@@ -168,7 +178,19 @@
     }
 
     function add_subreddit_to_dom(subreddit) {
-    	// todo: do subreddit adding logic here
+    	// todo: move subreddit adding logic here
+    }
+
+    function sort_single_subreddit(subreddit, sort_by) {
+        console.log(subreddit, sort_by);
+    }
+
+    function sort_all_subreddits(sort_by) {
+        var subreddits = "";
+
+        for (var i = 0; i < subreddits.length; i++) {
+            sort_single_subreddit(subreddits[i], sort_by);
+        }
     }
 
 }());

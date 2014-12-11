@@ -16,6 +16,10 @@
 	margin-bottom: 5px;
 }
 
-input, button {
+input, button, select {
 	margin: 5px 0 !important;
+}
+
+.mt-40 {
+	margin-top: 40px !important;
 }
