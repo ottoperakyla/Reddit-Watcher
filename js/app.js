@@ -21,6 +21,8 @@
 
     // load initial reddits
     $("document").ready(function(event) {
+        $("#reddit-to-add").focus();
+
         $.get('templates/subreddit-template.mst', function(template) {
             //var subreddits_to_add = ["starcraft", "bjj", "gaming", "aww"]; // todo: load these from localstorage
             var subreddits_to_add = reddits_in_localstorage || []; // load from variable or set to empty array if empty variable
@@ -36,6 +38,16 @@
                 $(get_subreddit_button).click({
                     subreddit_button: get_subreddit_button
                 }, get_subreddit);
+
+                // todo: init subreddits loaded from localstorage also
+                console.log(subreddits_to_add[i]);
+
+                // todo: lol... fix this
+                get_subreddit({
+                    data: {
+                        subreddit_button: "#get-subreddit-" + subreddits_to_add[i]
+                    }
+                });
             }
         });
     });
@@ -92,21 +104,24 @@
     });
 
     $("#remove-all-reddits").click(function(event) {
+        if (!confirm("Are you sure?"))
+            return;
+
         var subreddits_to_remove = $(".subreddit-section");
 
         for (var i = 0; i < subreddits_to_remove.length; i++) {
             // remove from dom
             $(subreddits_to_remove[i]).remove();
             // remove from local storage
-            localStorage.setItem(app_name, "");
+            localStorage.removeItem(app_name);
         }
     });
 
     // gets posts for a subreddit
     // NOTE: it gets its argument from passed in event object!
-    function get_subreddit(event) {
-        var $button = $(event.data.subreddit_button);
-        console.log($button);
+    function get_subreddit(eventObject) {
+        console.log(eventObject);
+        var $button = $(eventObject.data.subreddit_button);
 
         var subreddit = $button.siblings("input").val();
         var subreddit_url = "http://www.reddit.com/r/" + subreddit + "/new.json";
