@@ -13,4 +13,4 @@ how to use:
 
 tofix:
 -----
-- removed reddits from "remove all reddits" sometimes come back on window load
+- removed reddits from "remove all reddits" sometimes comes back on window load
