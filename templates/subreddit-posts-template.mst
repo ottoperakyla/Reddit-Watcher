@@ -1,6 +1,7 @@
 <table id="subreddit-listing-{{subreddit}}" class="table table-striped subreddit-listing-list">
 	<tr>
 		<th>Title</th>
+		<th>User</th>
 		<th>Ups</th>
 		<th>Comments</th>
 	</tr>
@@ -8,6 +9,9 @@
 		<tr>
 			<td>
 				<a class="permalink" href="{{permalink}}">{{title}}</a>
+			</td>
+			<td>
+				<a href="{{link_to_user}}">{{author}}</a>
 			</td>
 			<td>
 				<a href="{{permalink}}">{{ups}}</a>

@@ -2,6 +2,10 @@ body {
 	background-color: #ccc;
 }
 
+.container {
+	width: 100%;
+}
+
 .current-reddits {
 	padding: 40px 0;
 }
@@ -31,4 +35,8 @@ input {
 
 .mt-40 {
 	margin-top: 40px !important;
+}
+
+td, th {
+	text-align: center;
 }

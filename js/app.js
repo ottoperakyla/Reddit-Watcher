@@ -1,4 +1,23 @@
 (function() {
+
+    // features to add
+    // refresh all reddit views every n minutes
+    // and show new the posts that were added in that time
+    // with a different style, also user who added?
+
+    // pagination
+
+    // add queryparameter to share reddits with friends e.g. ?reddits=aww,funny,all
+
+    // add a spinner to show when loading data
+
+    // fixes
+
+    // calling the same kind of $.get in many places
+    // move this to a single function 
+
+    // post titles are too long for ui
+
     // todo first: subreddits sometimes appear
     // on page load even when they were deleted first
 
@@ -15,6 +34,36 @@
     var safe_domains = ["reddit.com", "imgur.com"];
 
     // todo: in open all hrefs add treshold how much points/comments to have to open
+
+    if (window.location.search) {
+        var queryparams = window.location.search.match(/\?reddits=([\w,]+)/);
+
+        if (queryparams) {
+            queryparams = queryparams[1].split(",");
+            console.log("queryparams is", queryparams);
+            // todo remove localstorage items here
+            // and load the reddits given in queryparameter
+            if (localStorage.getItem(app_name)) {
+                localStorage.removeItem(app_name);
+            }
+
+            for (var i = 0; i < queryparams.length; i++) {
+                $.get("http://www.reddit.com/r/" + queryparams[i] + "/hot.json", function(subreddit) {
+                    // process subreddit here and append to dom
+                    for (var i = 0; i < subreddit.data.children.length; i++) {
+                        console.log(subreddit.data.children[i]);
+                    }
+ 
+                })
+                .fail(function(error) {
+                    alert(error);
+                });
+            }
+
+        }
+
+
+    }
 
     var reddits_in_localstorage = [];
     var app_name = "rlt_subreddits";
@@ -53,7 +102,7 @@
                 }, get_subreddit);
 
                 // todo: init subreddits loaded from localstorage also
-                //console.log(subreddits_to_add[i]);
+                ////console.log(subreddits_to_add[i]);
 
                 // also load reddits on page init
                 // todo: lol... fix this
@@ -85,7 +134,7 @@
 	        		localstorage_subreddits.splice(i, 1);
 	        }
 
-	        //console.log(JSON.stringify(localstorage_subreddits));
+	        ////console.log(JSON.stringify(localstorage_subreddits));
 
 	        localStorage.setItem(app_name, JSON.stringify(localstorage_subreddits));
         }
@@ -96,7 +145,7 @@
             if (!confirm("Are you sure? This will open a lot of tabs.")) 
                 return;
 
-            console.log("open posts for", is_open_all_posts[1]);
+            //console.log("open posts for", is_open_all_posts[1]);
             var target = "#subreddit-listing-" + is_open_all_posts[1];
             console.log(target);
             var subreddit_posts_listing = $(target);
@@ -250,37 +299,23 @@
             for (var i = 0; i < posts.length; i++) {
                 var post_data = posts[i].data;
 
-                console.log(post_data);
+                console.log("post", post_data);
 
-                var link_to_push = post_data.permalink;
+                var post_html = {
+                     permalink: reddit_domain + post_data.permalink,
+                     title: post_data.title,
+                     author: post_data.author,
+                     link_to_user: reddit_domain + "/u/" + post_data.author + "/submitted",
+                     num_comments: post_data.num_comments,
+                     ups: post_data.ups
+                };
 
-                // todo: fix this mess...
-                // no idea why, but it works:D
                 if (get_imgur_links) {
                     // post_data.url points directly to outside links (e.g. imgur)
+                    post_html.permalink = post_data.url;
+                } 
 
-                    var to_push = {
-                        permalink: post_data.url,
-                        title: post_data.title,
-                        num_comments: post_data.num_comments,
-                        ups: post_data.ups
-                    };
-
-
-                    posts_html.push(to_push);
-
-                    console.log("pushed", to_push);
-
-                } else {
-                    posts_html.push({
-                        // need to add reddit.com since permalink is relative to reddit
-                        permalink:  reddit_domain + post_data.permalink,
-                        title: post_data.title,
-                          num_comments: post_data.num_comments,
-                        ups: post_data.ups
-                    });
-                }
-
+                posts_html.push(post_html);
             }
 
             $.get('templates/subreddit-posts-template.mst', function(template) {
@@ -290,8 +325,8 @@
                     posts: posts_html
                 });
 
-                console.log(posts_html);
-                console.log(rendered);
+                //console.log(posts_html);
+                //console.log(rendered);
 
                 $button.parent().parent().siblings().find(".subreddit-listing").html(rendered);
             });
@@ -307,7 +342,7 @@ function add_subreddit_to_dom(subreddit) {
     }
 
     function sort_single_subreddit(subreddit_list, sort_by) {
-        console.log(sort_by);
+        //console.log(sort_by);
         var subreddit = subreddit_list.match(/-(\w+)$/)[1];
 
         var sorted_jsons = {
