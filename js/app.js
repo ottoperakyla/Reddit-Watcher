@@ -1,5 +1,26 @@
 (function() {
 
+    // features to add
+    // refresh all reddit views every n minutes
+    // and show new the posts that were added in that time
+    // with a different style, also user who added?
+
+    // pagination
+
+    // add queryparameter to share reddits with friends e.g. ?reddits=aww,funny,all
+
+    // add a spinner to show when loading data
+
+    // fixes
+
+    // calling the same kind of $.get in many places
+    // move this to a single function 
+
+    // post titles are too long for ui
+
+    // todo first: subreddits sometimes appear
+    // on page load even when they were deleted first
+
     // to add:
 
         // refresh all reddit views every n minutes
@@ -38,6 +59,36 @@
 
     
     var safe_domains = ["reddit.com", "imgur.com"];
+
+    if (window.location.search) {
+        var queryparams = window.location.search.match(/\?reddits=([\w,]+)/);
+
+        if (queryparams) {
+            queryparams = queryparams[1].split(",");
+            console.log("queryparams is", queryparams);
+            // todo remove localstorage items here
+            // and load the reddits given in queryparameter
+            if (localStorage.getItem(app_name)) {
+                localStorage.removeItem(app_name);
+            }
+
+            for (var i = 0; i < queryparams.length; i++) {
+                $.get("http://www.reddit.com/r/" + queryparams[i] + "/hot.json", function(subreddit) {
+                    // process subreddit here and append to dom
+                    for (var i = 0; i < subreddit.data.children.length; i++) {
+                        console.log(subreddit.data.children[i]);
+                    }
+ 
+                })
+                .fail(function(error) {
+                    alert(error);
+                });
+            }
+
+        }
+
+
+    }
 
     if (window.location.search) {
         var queryparams = window.location.search.match(/\?reddits=([\w,]+)/);
