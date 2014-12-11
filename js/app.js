@@ -118,7 +118,8 @@
 
     // todo: do sorting for single subreddits and all subreddits here
     $("#reddit-loader-thing").change(function(event) {
-        sort_single_subreddit(event.target.id, event.target.value);
+        var list_to_sort = $(event.target).attr('data-subreddit-listing');
+        sort_single_subreddit(list_to_sort, event.target.value);
     });
 
 
@@ -173,12 +174,60 @@
     // gets posts for a subreddit
     // NOTE: it gets its argument from passed in event object!
     function get_subreddit(eventObject) {
+        // todo: fix this whole mess
+        // using the same $.get calls twice... :(
+        if (arguments.length == 2) {
+            var subreddit = arguments[0];
+            var $list_to_sort = $("#subreddit-listing-"+arguments[0]);
+
+            $.get("http://www.reddit.com/r/"+arguments[0]+"/top.json?t="+arguments[1], function(subreddit_posts) {
+               
+               var posts = subreddit_posts.data.children;
+               var posts_html = [];
+
+               for (var i = 0; i < posts.length; i++) {
+                console.log(posts[i])
+                    posts_html.push({
+                        permalink: posts[i].data.url,
+                        title: posts[i].data.title
+                    });
+                   console.log(posts[i].data.url);
+               }
+
+
+            $.get('templates/subreddit-posts-template.mst', function(template) {
+                console.log("subr:", subreddit, "posts html:",posts_html);
+
+                var rendered = Mustache.render(template, {
+                    subreddit: subreddit,
+                    posts: posts_html
+                });
+
+
+                 var target = "#subreddit-listing-" + subreddit;
+                 $(target).html(rendered);
+
+
+            });
+
+               console.log(subreddit_posts.data.children);
+
+            }).fail(function(error){
+                console.log("error", error);
+            });
+
+            console.log(arguments);
+
+            return;
+        }
+     
       //  console.log(eventObject);
       var $button = $(eventObject.data.subreddit_button);
       var subreddit = $button[0].getAttribute('data-subreddit');
 
         // hot.json = newest posts
         // top.json = best subs (use ?t=hour,day,week,month,year,all parameter here)
+
         var subreddit_url = "http://www.reddit.com/r/" + subreddit + "/hot.json";
         $button.parent().siblings().html("");
 
@@ -233,8 +282,33 @@ function add_subreddit_to_dom(subreddit) {
     	// todo: move subreddit adding logic here
     }
 
-    function sort_single_subreddit(subreddit, sort_by) {
-        console.log(subreddit, sort_by);
+    function sort_single_subreddit(subreddit_list, sort_by) {
+        console.log(sort_by);
+        var subreddit = subreddit_list.match(/-(\w+)$/)[1];
+
+        var sorted_jsons = {
+            top_all_time: "all",
+            top_year: "year",
+            top_month: "month",
+            top_week: "week",
+            "new": "hot" 
+        };
+
+        var sort_method = sorted_jsons[sort_by];
+        var base_url = "http://www.reddit.com/r/"+subreddit;
+        var json_url = "";
+
+        if (sort_method == "hot") {
+            json_url = base_url + "/hot.json";
+        } else {
+            json_url = base_url + "/top.json?t="+sorted_jsons[sort_by];
+        }
+
+        get_subreddit(subreddit, sort_method);
+
+          // hot.json = newest posts
+        // top.json = best subs (use ?t=hour,day,week,month,year,all parameter here)
+      //  $("#"+subreddit).html("");
     }
 
     function sort_all_subreddits(sort_by) {
