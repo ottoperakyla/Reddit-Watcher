@@ -16,17 +16,6 @@
 	margin-bottom: 5px;
 }
 
-.icon-add-reddit {
-	color: green;
-	font-size: 20px;
-}
-
-a#add-reddit {
-	text-decoration: none !important;
-	position: absolute;
-	top: 20px;
-}
-
 input, button {
 	margin: 5px 0 !important;
 }
