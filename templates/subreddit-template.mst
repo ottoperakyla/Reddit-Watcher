@@ -9,7 +9,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<input type="text" class="subreddit text-center form-control" value="{{subreddit}}" />
-			<button id="get-subreddit-{{subreddit}}" class="btn-block btn btn-mini btn-success get-reddit">Load</button>
+			<button id="get-subreddit-{{subreddit}}" class="btn-block btn btn-mini btn-success get-reddit">Refresh</button>
 		</div>
 	</div>
 </div>

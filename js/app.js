@@ -97,6 +97,12 @@
                 subreddit_button: added_subreddit_button
             }, get_subreddit);
 
+            get_subreddit({
+                data: {
+                    subreddit_button: added_subreddit_button
+                }
+            });
+
             // add to global scope and save to local storage
             reddits_in_localstorage.push(reddit_to_add);
             localStorage.setItem(app_name, JSON.stringify(reddits_in_localstorage));
