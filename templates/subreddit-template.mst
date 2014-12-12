@@ -11,7 +11,7 @@
 		</select>
 	</div>
 	<div class="row">
-		<div class="col-md-12 subreddit-listing"></div>
+		<div class="col-md-12 subreddit-listing" id="subreddit-listing-{{subreddit}}"></div>
 	</div>
 	<div class="row">
 		<div class="col-md-12">

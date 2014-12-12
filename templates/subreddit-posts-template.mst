@@ -1,4 +1,4 @@
-<table id="subreddit-listing-{{subreddit}}" class="table table-striped subreddit-listing-list">
+<table class="table table-striped subreddit-listing-list">
 	<tr>
 		<th>Title</th>
 		<th>User</th>
