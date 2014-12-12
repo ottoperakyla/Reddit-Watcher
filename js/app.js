@@ -37,60 +37,150 @@
         // and when adding a new one
         // move it to a single function
 
-
-
     //var safe_domains = ['reddit.com', 'imgur.com']; todo: only open these domains in open all
     var reddit_base_url = 'http://www.reddit.com/';
     var subreddit_base_url = 'http://www.reddit.com/r/';
     // used as localstorage variable
     var app_name = 'rw_subreddits'; 
-    var subreddits_row = $("#subreddits-row");
+    var subreddits_row = $('#subreddits-row');
 
     var subreddit_template = 'templates/subreddit-template.mst';
     var posts_template = 'templates/subreddit-posts-template.mst';
 
+    var subreddits_to_save = [];
+
     // load reddits if they are defined in get parameter 'reddits'
-    if (window.location.search) {
-        var subreddits_to_add = window.location.search.match(/\?reddits=([\w,]+)/);
+    var subreddits_in_get = window.location.search.match(/\?reddits=([\w,]+)/);
+    if (subreddits_in_get) {
 
-        if (subreddits_to_add) {
-            subreddits_to_add = subreddits_to_add[1].split(',');
+        subreddits_in_get = subreddits_in_get[1].split(',');
+        add_subreddits_to_dom(subreddits_in_get);
 
-            // remove old localstorage data
-            if (localStorage.getItem(app_name)) 
-                localStorage.removeItem(app_name);
-
-            add_subreddits_to_dom(subreddits_to_add);
-        }
+    } else if (localStorage.getItem(app_name)) {
+        // no get parameter defined load from local storage if we have
+        add_subreddits_to_dom(localstorage_get());
     }
 
+    $('#add-reddit').click(function() {
+        var subreddit_to_add = $('#reddit-to-add').val();
+        add_subreddit_to_dom(subreddit_to_add);
+        subreddits_to_save.push(subreddit_to_add);
+        localstorage_save();
+    });
 
+    $('#remove-all-reddits').click(function() {
+        remove_all_reddits();
+        localstorage_clear();
+    });
+
+    $('#refresh-all-reddits').click(function(){
+        refresh_all_reddits();
+    });
+
+    $('.get-reddit').each(function(i, btn) {
+        btn.click(function(){
+            alert('yat');
+        });
+    });
+
+    $('#reddit-loader-thing').on('click', '.get-reddit', function(event) {
+        // lol
+        refresh_subreddit($('#subreddit-listing-'+$(event.currentTarget).attr('data-subreddit')).parents().eq(0).find('table'));
+    });
+
+    $('.get-reddit').click(function(){
+        alert('yay');
+        refresh_subreddit($(this).attr('data-subreddit'));
+    });
+
+    function localstorage_clear()
+    {
+        if(localStorage.getItem(app_name))
+            localStorage.removeItem(app_name);
+    }
+
+    function localstorage_save()
+    {
+        localStorage.setItem(app_name, JSON.stringify(subreddits_to_save));
+    }
+
+    function localstorage_get()
+    {
+        return JSON.parse(localStorage.getItem(app_name));
+    }
+
+    function remove_all_reddits() {
+        $('.subreddit-section').each(function(i, section) {
+            $(section).remove();
+        });
+    }
+
+    function refresh_all_reddits() {
+        $('.subreddit-listing-list').each(function(i, listing) {
+            refresh_subreddit(listing);
+        });
+    }
+
+    function refresh_subreddit(subreddit) {
+        
+       // var temp = $(subreddit).attr('data-subreddit');
+       // var temp = subreddit;
+       console.log('subr',subreddit);
+        $(subreddit).remove();
+        render_posts_template($(subreddit).attr('data-subreddit'));
+        
+    }
+
+    // todo: fix ordering, now reddits get added
+    // in the order they finish loading with get
+    function add_subreddit_to_dom(subreddit) 
+    {
+        $.get(get_url_to_subreddit_json(subreddit), function(subreddit_json) {
+            $.get(subreddit_template, function(template) {
+                var rendered = Mustache.render(template, {
+                    subreddit: subreddit
+                });
+
+                $(subreddits_row).append(rendered);
+            })
+            .done(function(){
+                render_posts_template(subreddit);
+            });
+        });
+    }
+
+    function render_posts_template(subreddit)
+    {
+        var subreddit_json = get_url_to_subreddit_json(subreddit);
+
+        $.get(get_url_to_subreddit_json(subreddit), function(subreddit_json) {
+            $.get(posts_template, function(template) {
+             var rendered = Mustache.render(template, {
+                subreddit: subreddit,
+                posts: subreddit_data_from_json(subreddit_json)
+            });
+
+             $('#subreddit-listing-'+subreddit).append(rendered);
+         })
+        });
+
+        $.get(posts_template, function(template) {
+
+            var rendered = Mustache.render(template, {
+                subreddit: subreddit,
+                posts: subreddit_data_from_json(subreddit_json)
+            });
+
+            var subreddit_listing = '#subreddit-listing-'+subreddit;
+
+            $(subreddit_listing).append(rendered);
+        });
+    }
 
     function add_subreddits_to_dom(subreddits)
     {
         $.each(subreddits, function(i, subreddit) {
-            $.get(get_url_to_subreddit_json(subreddit), function(subreddit_json) {
-                $.get(subreddit_template, function(template) {
-                    var rendered = Mustache.render(template, {
-                        subreddit: subreddit
-                    });
-
-                    $(subreddits_row).append(rendered);
-                })
-                .done(function(){
-                 $.get(posts_template, function(template) {
-
-                    var rendered = Mustache.render(template, {
-                        subreddit: subreddit,
-                        posts: subreddit_data_from_json(subreddit_json)
-                    });
-
-                    var subreddit_listing = "#subreddit-listing-"+subreddit;
-
-                    $(subreddit_listing).append(rendered);
-                });
-             });
-            });
+            add_subreddit_to_dom(subreddit);
         });
     }
 
