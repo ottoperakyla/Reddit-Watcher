@@ -17,7 +17,7 @@
 				<a href="{{permalink}}">{{ups}}</a>
 			</td>
 			<td>
-				<a href="{{permalink}}">{{num_comments}}</a>
+				<a href="{{link_to_comments}}">{{num_comments}}</a>
 			</td>
 		</tr>
 	{{/posts}}

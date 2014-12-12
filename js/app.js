@@ -1,25 +1,6 @@
 (function() {
 
-    // features to add
-    // refresh all reddit views every n minutes
-    // and show new the posts that were added in that time
-    // with a different style, also user who added?
-
-    // pagination
-
-    // add queryparameter to share reddits with friends e.g. ?reddits=aww,funny,all
-
-    // add a spinner to show when loading data
-
-    // fixes
-
-    // calling the same kind of $.get in many places
-    // move this to a single function 
-
-    // post titles are too long for ui
-
-    // todo first: subreddits sometimes appear
-    // on page load even when they were deleted first
+    'use strict';
 
     // to add:
 
@@ -57,38 +38,73 @@
         // move it to a single function
 
 
-    
-    var safe_domains = ["reddit.com", "imgur.com"];
 
+    //var safe_domains = ["reddit.com", "imgur.com"]; not used yet
+    var reddit_base_url = "http://www.reddit.com/";
+    var subreddit_base_url = "http://www.reddit.com/r/";
+    // used as localstorage variable
+    var app_name = "rw_subreddits"; 
+
+    // load reddits if they are defined in get parameter "reddits"
     if (window.location.search) {
         var queryparams = window.location.search.match(/\?reddits=([\w,]+)/);
 
         if (queryparams) {
             queryparams = queryparams[1].split(",");
-            console.log("queryparams is", queryparams);
-            // todo remove localstorage items here
-            // and load the reddits given in queryparameter
-            if (localStorage.getItem(app_name)) {
-                localStorage.removeItem(app_name);
-            }
 
+            // remove old localstorage data
+            if (localStorage.getItem(app_name)) 
+                localStorage.removeItem(app_name);
+
+            var subreddits_to_process = [];
+            
             for (var i = 0; i < queryparams.length; i++) {
-                $.get("http://www.reddit.com/r/" + queryparams[i] + "/hot.json", function(subreddit) {
-                    // process subreddit here and append to dom
-                    for (var i = 0; i < subreddit.data.children.length; i++) {
-                        console.log(subreddit.data.children[i]);
-                    }
- 
+                $.get(get_url_to_subreddit_json(queryparams[i], "day"), function(subreddit_json) {
+                    var subreddit_html = subreddit_data_from_json(subreddit_json);
+
+                    subreddits_to_process.push(subreddit_html);
                 })
                 .fail(function(error) {
-                    alert(error);
+                    throw Exception(error);
                 });
             }
 
+            console.dir(subreddits_to_process);
+        }
+    }
+
+    function subreddit_data_from_json(subreddit_json)
+    {
+        var subreddit_data = [];
+
+       for (var i = 0; i < subreddit_json.data.children.length; i++) {
+            var post = subreddit_json.data.children[i].data;
+
+            console.dir(post);
+
+            subreddit_data.push({
+                title: post.title,
+                url: post.url,
+                permalink: post.permalink,
+                ups: post.ups,
+                num_comments: post.num_comments,
+                author: post.author
+            });
         }
 
-
+        return subreddit_data;
     }
+
+    // return hot.json by default
+    // or top.json if second argument is passed
+    // also get type of ordeding from second argument
+    function get_url_to_subreddit_json(subreddit_name /*,type*/)
+    {
+        var json_file = arguments.length == 2 ? "/top.json?t=" + arguments[1] : "/hot.json";
+        return subreddit_base_url + subreddit_name + json_file;
+    }
+
+    /*
 
     var reddits_in_localstorage = [];
     var app_name = "rlt_subreddits";
@@ -272,7 +288,8 @@
                         permalink: posts[i].data.url,
                         title: posts[i].data.title,
                         num_comments: posts[i].data.num_comments,
-                        ups: posts[i].data.ups
+                        ups: posts[i].data.ups,
+                        link_to_comments: reddit_domain + post_data.permalink + "/comments/"
                     });
                     console.log(posts[i].data.url);
                 }
@@ -331,7 +348,8 @@
                      author: post_data.author,
                      link_to_user: reddit_domain + "/u/" + post_data.author + "/submitted",
                      num_comments: post_data.num_comments,
-                     ups: post_data.ups
+                     ups: post_data.ups,
+                     link_to_comments: reddit_domain + post_data.permalink + "/comments/"
                 };
 
                 if (get_imgur_links) {
@@ -401,5 +419,5 @@ function add_subreddit_to_dom(subreddit) {
         sort_single_subreddit(subreddits[i], sort_by);
     }
 }
-
+*/
 }());
