@@ -2,41 +2,6 @@
 
     'use strict';
 
-    // to add:
-
-        // refresh all reddit views every n minutes
-        // and show new the posts that were added in that time
-        // with a different style, also user who added?
-
-        // pagination
-
-        // sorting within a subreddit list (e.g. by ups, comments, username)
-
-        // search suggestions to subreddit name input field
-
-        // add queryparameter to share reddits with friends e.g. ?reddits=aww,funny,all
-        // this is added but adding the reddits based on them is not yet
-
-        // add a spinner to show when loading data
-
-        // in open all hrefs only open links with safe domains
-
-        // in open all hrefs add treshold how much points/comments to have to open
-        // maybe also add a filter on how many points/comments to have to show in list
-
-    // to fix:
-
-        // calling the same kind of $.get in many places
-        // move this to a single function 
-
-        // subreddits sometimes appear
-        // on page load even when they were deleted first
-
-        // subreddit adding logic is in two places
-        // when first loading them from local storage 
-        // and when adding a new one
-        // move it to a single function
-
     //var safe_domains = ['reddit.com', 'imgur.com']; todo: only open these domains in open all
     var reddit_base_url = 'http://www.reddit.com/';
     var subreddit_base_url = 'http://www.reddit.com/r/';
