@@ -44,3 +44,12 @@ td, th {
 a:hover{
 	text-decoration: none !important;
 }
+
+#loading-div {
+	position: fixed;
+	z-index: 1000;
+}
+
+#loading-div i {
+	font-size: 100px;
+}

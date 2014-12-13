@@ -1,4 +1,4 @@
-<table class="table table-striped subreddit-listing-list" data-subreddit="{{subreddit}}">
+<table id="{{subreddit}}-listing" class="table table-striped subreddit-listing-list" data-subreddit="{{subreddit}}">
 	<tr>
 		<th>Title</th>
 		<th>User</th>
@@ -6,19 +6,19 @@
 		<th>Comments</th>
 	</tr>
 	{{#posts}}
-		<tr>
-			<td>
-				<a class="permalink" href="{{url}}">{{title}}</a>
-			</td>
-			<td>
-				<a href="http://www.reddit.com/u/{{author}}">{{author}}</a>
-			</td>
-			<td>
-				<a href="http://www.reddit.com/{{permalink}}">{{ups}}</a>
-			</td>
-			<td>
-				<a href="http://www.reddit.com/{{permalink}}">{{num_comments}}</a>
-			</td>
-		</tr>
+	<tr>
+		<td>
+			<a class="permalink" href="{{url}}">{{title}}</a>
+		</td>
+		<td>
+			<a href="http://www.reddit.com/u/{{author}}">{{author}}</a>
+		</td>
+		<td>
+			<a href="http://www.reddit.com/{{permalink}}">{{ups}}</a>
+		</td>
+		<td>
+			<a href="http://www.reddit.com/{{permalink}}">{{num_comments}}</a>
+		</td>
+	</tr>
 	{{/posts}}
 </table>

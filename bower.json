@@ -23,6 +23,7 @@
   "dependencies": {
     "bootstrap": "*",
     "jquery": "*",
-    "mustache": "*"
+    "mustache": "*",
+    "font-awesome": "*"
   }
 }
