@@ -1,8 +1,11 @@
-reddit-loader-thing
+Reddit Watcher
 ===================
 
-- loads things from reddit
-- run `bower install` first to run
+- loads subreddit posts from reddit
+
+installation
+------------
+- run `bower install` first to install dependencies
 
 how to use:
 -----------
@@ -10,7 +13,3 @@ how to use:
 2. press "open all posts"
 3. ????
 4. profit
-
-tofix:
------
-- removed reddits from "remove all reddits" sometimes comes back on window load
