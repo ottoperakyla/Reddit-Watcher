@@ -2,12 +2,12 @@
 	<div class="row text-center">
 		<h2><a href="http://www.reddit.com/r/{{subreddit}}" target="_blank">/r/{{subreddit}}</a></h2>
 		<label for="sort_by">Sort by</label>
-		<select data-subreddit-listing="subreddit-listing-{{subreddit}}" class="form-control sort" name="sort_by" id="{{subreddit}}-sort-by">
+		<select data-subreddit="{{subreddit}}" data-subreddit-listing="subreddit-listing-{{subreddit}}" class="form-control sort" name="sort_by" id="{{subreddit}}-sort-by">
 			<option value="new">New</option>
-			<option value="top_all_time">Top: all time</option>
-			<option value="top_year">Top: year</option>
-			<option value="top_month">Top: month</option>
-			<option value="top_week">Top: week</option>
+			<option value="all">Top: all time</option>
+			<option value="year">Top: year</option>
+			<option value="month">Top: month</option>
+			<option value="week">Top: week</option>
 		</select>
 	</div>
 	<div class="row">

@@ -102,12 +102,6 @@
         });
     });
 
-    $(app_html).on('change', 'select.sort', function(event) {
-        console.log("changed", event.target);
-        // need to get json url to different kinds here
-        // and call refresh_subreddit with right id
-    });
-
     function localstorage_clear() {
         if (localStorage.getItem(app_name))
             localStorage.removeItem(app_name);
@@ -137,9 +131,13 @@
         });
     }
 
-    function refresh_subreddit(subreddit) {
+    // todo rewrite this to allow a second parameter
+    // with sorting type to be passed in
+    function refresh_subreddit(subreddit /*,type*/) {
+        var type = arguments[1] || null;
         $("#"+subreddit+"-listing").remove();
-        render_posts_template(subreddit);
+ 
+        render_posts_template(subreddit, type);
     }
 
     // todo: fix ordering, now reddits get added
@@ -147,22 +145,30 @@
     function add_subreddit_to_dom(subreddit) {
         $.get(get_url_to_subreddit_json(subreddit), function(subreddit_json) {
             $.get(subreddit_template, function(template) {
-                    var rendered = Mustache.render(template, {
-                        subreddit: subreddit
-                    });
-
-                    $(subreddits_row).append(rendered);
-                })
-                .done(function() {
-                    render_posts_template(subreddit);
+                var rendered = Mustache.render(template, {
+                    subreddit: subreddit
                 });
+
+                $(subreddits_row).append(rendered);
+            })
+            .done(function() {
+                render_posts_template(subreddit);
+            });
         });
     }
 
-    function render_posts_template(subreddit) {
-        var subreddit_json = get_url_to_subreddit_json(subreddit);
+    $(app_html).on('change', 'select.sort', function(event) {
+        var subreddit = $(event.target).attr('data-subreddit');
+        
+        refresh_subreddit(subreddit, event.target.value);
 
-        $.get(get_url_to_subreddit_json(subreddit), function(subreddit_json) {
+    });
+
+    function render_posts_template(subreddit /*,type*/) {
+        var type = arguments[1] || null;
+        type="all";
+
+        $.get(get_url_to_subreddit_json(subreddit,type), function(subreddit_json) {
             $.get(posts_template, function(template) {
                 var rendered = Mustache.render(template, {
                     subreddit: subreddit,
@@ -212,10 +218,9 @@
     }
 
     // return hot.json by default
-    // or top.json if second argument is passed
-    // also get type of ordeding from second argument
-    function get_url_to_subreddit_json(subreddit_name /*,type*/ ) {
-        var json_file = arguments.length == 2 ? '/top.json?t=' + arguments[1] : '/new.json?sort=new';
+    // or top.json with ordering if second argument given
+    function get_url_to_subreddit_json(subreddit_name /*,type*/) {
+        var json_file = arguments[1] != null ? '/top.json?t=' + arguments[1] : '/new.json?sort=new';
         return subreddit_base_url + subreddit_name + json_file;
     }
 
