@@ -13,13 +13,13 @@
         }
     });
 
-    // update every 30 seconds
+    // update every 60 seconds
     // since according to this: http://www.reddit.com/r/redditdev/comments/2hka4a/how_often_does_the_reddit_front_page_or_any_page/
-    // thats how often posts are updated to reddit
+    // posts are pushed in every 30 seconds
     // tofix: after refresh it defaults to hot.json again
     setInterval(function() {
         refresh_all_reddits();
-    }, 30000);
+    }, 60000);
 
     //var safe_domains = ['reddit.com', 'imgur.com']; todo: only open these domains in open all
     var reddit_base_url = 'http://www.reddit.com/';
@@ -31,7 +31,7 @@
     var subreddit_template = 'templates/subreddit-template.mst';
     var posts_template = 'templates/subreddit-posts-template.mst';
 
-    var subreddits_to_save = [];
+    var subreddits_to_save = localstorage_get() || [];
     //var current_jsons = {};
     var set_to_refresh = null;
 
@@ -111,7 +111,10 @@
     }
 
     function localstorage_get() {
-        return JSON.parse(localStorage.getItem(app_name));
+        if (localStorage.getItem(app_name) != null) 
+            return JSON.parse(localStorage.getItem(app_name));
+
+        return false;
     }
 
     function remove_all_reddits() {
