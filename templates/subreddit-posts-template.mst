@@ -8,16 +8,16 @@
 	{{#posts}}
 	<tr>
 		<td>
-			<a class="permalink" href="{{url}}">{{title}}</a>
+			<a class="permalink" target="_blank" href="{{url}}">{{title}}</a>
 		</td>
 		<td>
-			<a href="http://www.reddit.com/u/{{author}}">{{author}}</a>
+			<a target="_blank" href="http://www.reddit.com/u/{{author}}">{{author}}</a>
 		</td>
 		<td>
-			<a href="http://www.reddit.com/{{permalink}}">{{ups}}</a>
+			<a target="_blank" href="http://www.reddit.com/{{permalink}}">{{ups}}</a>
 		</td>
 		<td>
-			<a href="http://www.reddit.com/{{permalink}}">{{num_comments}}</a>
+			<a target="_blank" href="http://www.reddit.com/{{permalink}}">{{num_comments}}</a>
 		</td>
 	</tr>
 	{{/posts}}

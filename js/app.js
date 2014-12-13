@@ -13,14 +13,13 @@
         }
     });
 
-    // every 10 seconds request new jsons from reddit
-    // check if the jsons have changed and refresh page 
-    // if they did change
-    (function(){
-        setInterval(function() {
-            //todo
-        }, 10000);
-    }());
+    // update every 30 seconds
+    // since according to this: http://www.reddit.com/r/redditdev/comments/2hka4a/how_often_does_the_reddit_front_page_or_any_page/
+    // thats how often posts are updated to reddit
+    // tofix: after refresh it defaults to hot.json again
+    setInterval(function() {
+        refresh_all_reddits();
+    }, 30000);
 
     //var safe_domains = ['reddit.com', 'imgur.com']; todo: only open these domains in open all
     var reddit_base_url = 'http://www.reddit.com/';
@@ -98,8 +97,8 @@
         var posts_to_open = $("table#"+subreddit_listing_to_open).find("a.permalink");
 
         posts_to_open.each(function(i, post){
-            window.open(post.href, "_blank");
-        });
+         window.open(post.href, "_blank");
+     });
     });
 
     function localstorage_clear() {
@@ -134,9 +133,11 @@
     // todo rewrite this to allow a second parameter
     // with sorting type to be passed in
     function refresh_subreddit(subreddit /*,type*/) {
-        var type = arguments[1] || null;
+        var sort_by_value = $("#"+subreddit+"-sort-by").val();
+        var type = arguments[1] || sort_by_value;
+
         $("#"+subreddit+"-listing").remove();
- 
+
         render_posts_template(subreddit, type);
     }
 
@@ -158,6 +159,24 @@
     }
 
     $(app_html).on('change', 'select.sort', function(event) {
+
+
+        // todo: handle sorting of all reddits here
+        var is_refresh_all_reddits = event.target.name == "sort_all";
+
+        if (is_refresh_all_reddits) {
+            var sort_all_by = $(event.target).val();
+
+            $("select").each(function(i, select) {
+                $(select).val(sort_all_by)
+            });
+
+            refresh_all_reddits();
+        }
+
+
+
+
         var subreddit = $(event.target).attr('data-subreddit');
         
         refresh_subreddit(subreddit, event.target.value);
@@ -166,61 +185,75 @@
 
     function render_posts_template(subreddit /*,type*/) {
         var type = arguments[1] || null;
-        type="all";
+     //   type="all";
 
-        $.get(get_url_to_subreddit_json(subreddit,type), function(subreddit_json) {
-            $.get(posts_template, function(template) {
-                var rendered = Mustache.render(template, {
-                    subreddit: subreddit,
-                    posts: subreddit_data_from_json(subreddit_json)
-                });
-
-                $('#subreddit-listing-' + subreddit).append(rendered);
-            })
-        });
-
+     $.get(get_url_to_subreddit_json(subreddit,type), function(subreddit_json) {
         $.get(posts_template, function(template) {
-
             var rendered = Mustache.render(template, {
                 subreddit: subreddit,
                 posts: subreddit_data_from_json(subreddit_json)
             });
 
-            var subreddit_listing = '#subreddit-listing-' + subreddit;
+            $('#subreddit-listing-' + subreddit).append(rendered);
+        })
+    });
 
-            $(subreddit_listing).append(rendered);
+     $.get(posts_template, function(template) {
+
+        var rendered = Mustache.render(template, {
+            subreddit: subreddit,
+            posts: subreddit_data_from_json(subreddit_json)
+        });
+
+        var subreddit_listing = '#subreddit-listing-' + subreddit;
+
+        $(subreddit_listing).append(rendered);
+    });
+ }
+
+ function add_subreddits_to_dom(subreddits) {
+    $.each(subreddits, function(i, subreddit) {
+        add_subreddit_to_dom(subreddit);
+    });
+}
+
+function subreddit_data_from_json(subreddit_json) {
+    var subreddit_data = [];
+
+    for (var i = 0; i < subreddit_json.data.children.length; i++) {
+        var post = subreddit_json.data.children[i].data;
+
+        subreddit_data.push({
+            title: post.title,
+            url: post.url,
+            permalink: post.permalink,
+            ups: post.ups,
+            num_comments: post.num_comments,
+            author: post.author
         });
     }
 
-    function add_subreddits_to_dom(subreddits) {
-        $.each(subreddits, function(i, subreddit) {
-            add_subreddit_to_dom(subreddit);
-        });
-    }
-
-    function subreddit_data_from_json(subreddit_json) {
-        var subreddit_data = [];
-
-        for (var i = 0; i < subreddit_json.data.children.length; i++) {
-            var post = subreddit_json.data.children[i].data;
-
-            subreddit_data.push({
-                title: post.title,
-                url: post.url,
-                permalink: post.permalink,
-                ups: post.ups,
-                num_comments: post.num_comments,
-                author: post.author
-            });
-        }
-
-        return subreddit_data;
-    }
+    return subreddit_data;
+}
 
     // return hot.json by default
     // or top.json with ordering if second argument given
+    // todo add support for "new" json also
+    // default should be hot and "new" should also be given as argument
     function get_url_to_subreddit_json(subreddit_name /*,type*/) {
-        var json_file = arguments[1] != null ? '/top.json?t=' + arguments[1] : '/new.json?sort=new';
+        var has_sort_type = arguments[1];
+        var json_file = "";
+
+        if (has_sort_type != null) {
+            if (has_sort_type == "new") 
+                json_file = '/new.json?sort=new';
+            else
+                json_file = '/top.json?t=' + has_sort_type;
+        } else {
+            json_file = '/hot.json';/*?sort=new*/
+        }
+
+        console.log("getting json", subreddit_base_url + subreddit_name + json_file);
         return subreddit_base_url + subreddit_name + json_file;
     }
 
