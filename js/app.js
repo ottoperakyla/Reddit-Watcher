@@ -13,6 +13,15 @@
         }
     });
 
+    // every 10 seconds request new jsons from reddit
+    // check if the jsons have changed and refresh page 
+    // if they did change
+    (function(){
+        setInterval(function() {
+            //todo
+        }, 10000);
+    }());
+
     //var safe_domains = ['reddit.com', 'imgur.com']; todo: only open these domains in open all
     var reddit_base_url = 'http://www.reddit.com/';
     var subreddit_base_url = 'http://www.reddit.com/r/';
@@ -24,7 +33,10 @@
     var posts_template = 'templates/subreddit-posts-template.mst';
 
     var subreddits_to_save = [];
+    //var current_jsons = {};
     var set_to_refresh = null;
+
+    var app_html = $('#reddit-watcher');//base element of app to watch for events
 
     // load reddits if they are defined in get parameter 'reddits'
     var subreddits_in_get = window.location.search.match(/\?reddits=([\w,]+)/);
@@ -63,28 +75,37 @@
         if (!parseInt(selected_refresh_value))
             return;
 
-        var interval_to_set = event.currentTarget.value * 60 * 1000;
+        // seconds to milliseconds
+        var interval_to_set = event.currentTarget.value * 1000;
 
         set_to_refresh = setInterval(function() {
             refresh_all_reddits();
-        }, 1000 /*interval_to_set*/ );
+        }, interval_to_set);
     });
 
-    // todo: should be easier to get to tables!!!
-    $('#reddit-loader-thing').on('click', '.get-reddit', function(event) {
+    $(app_html).on('click', '.get-reddit', function(event) {
         // lol
-        refresh_subreddit($(event.currentTarget).attr('data-listing'));
+        var subreddit_to_refresh = $(event.currentTarget).attr('data-subreddit');
+        console.log("refreshing", subreddit_to_refresh);
+        refresh_subreddit(subreddit_to_refresh);
     });
 
-    //todo: fix this!
-    $('#reddit-loader-thing').on('click', '.open-all', function(event) {
-        $("table").eq(0).children().find(".permalink").each(function(i, post) {
+    $(app_html).on('click', '.open-all', function(event) {
+        if (!confirm("Are you sure? This will open a lot of tabs.")) 
+            return;
+
+        var subreddit_listing_to_open = $(event.target).attr('data-subreddit') + "-listing";
+        var posts_to_open = $("table#"+subreddit_listing_to_open).find("a.permalink");
+
+        posts_to_open.each(function(i, post){
             window.open(post.href, "_blank");
         });
-        // lol
-        //   var a = $(event.currentTarget).attr('data-subreddit');
-        //   var t = $("#subreddit-listing-"+a).eq(0).find("table")[0];
-        //  console.log($(t));
+    });
+
+    $(app_html).on('change', 'select.sort', function(event) {
+        console.log("changed", event.target);
+        // need to get json url to different kinds here
+        // and call refresh_subreddit with right id
     });
 
     function localstorage_clear() {
@@ -106,19 +127,19 @@
         });
     }
 
+    function remove_subreddit(subreddit) {
+        //todo
+    }
+
     function refresh_all_reddits() {
         $('.subreddit-listing-list').each(function(i, listing) {
-            refresh_subreddit(listing);
+            refresh_subreddit($(listing).attr('data-subreddit'));
         });
     }
 
     function refresh_subreddit(subreddit) {
-
-        // var temp = $(subreddit).attr('data-subreddit');
-        // var temp = subreddit;
-        // gonewild-listing
-        $(subreddit).remove();
-        render_posts_template($(subreddit).attr('data-subreddit'));
+        $("#"+subreddit+"-listing").remove();
+        render_posts_template(subreddit);
     }
 
     // todo: fix ordering, now reddits get added
@@ -194,7 +215,7 @@
     // or top.json if second argument is passed
     // also get type of ordeding from second argument
     function get_url_to_subreddit_json(subreddit_name /*,type*/ ) {
-        var json_file = arguments.length == 2 ? '/top.json?t=' + arguments[1] : '/hot.json';
+        var json_file = arguments.length == 2 ? '/top.json?t=' + arguments[1] : '/new.json?sort=new';
         return subreddit_base_url + subreddit_name + json_file;
     }
 

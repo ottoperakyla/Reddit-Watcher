@@ -2,7 +2,7 @@
 	<div class="row text-center">
 		<h2><a href="http://www.reddit.com/r/{{subreddit}}" target="_blank">/r/{{subreddit}}</a></h2>
 		<label for="sort_by">Sort by</label>
-		<select data-subreddit-listing="subreddit-listing-{{subreddit}}" class="form-control" name="sort_by" id="{{subreddit}}-sort-by">
+		<select data-subreddit-listing="subreddit-listing-{{subreddit}}" class="form-control sort" name="sort_by" id="{{subreddit}}-sort-by">
 			<option value="new">New</option>
 			<option value="top_all_time">Top: all time</option>
 			<option value="top_year">Top: year</option>
@@ -11,13 +11,13 @@
 		</select>
 	</div>
 	<div class="row">
-		<div class="col-md-12 subreddit-listing" id="subreddit-listing-{{subreddit}}"></div>
+		<div class="col-md-12 subreddit-listing" id="subreddit-listing-{{subreddit}}" data-subreddit="{{subreddit}}"></div>
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<button data-listing="{{subreddit}}-listing" id="get-subreddit-{{subreddit}}" class="btn btn-success form-control get-reddit">Refresh</button>
-			<button data-listing="{{subreddit}}-listing" id="open-all-posts-{{subreddit}}" class="btn btn-warning form-control open-all">Open all posts</button>
-			<button data-listing="{{subreddit}}-listing" class="btn btn-danger form-control remove-single-subreddit" id="remove-{{subreddit}}">Remove</button>
+			<button data-subreddit="{{subreddit}}" id="get-subreddit-{{subreddit}}" class="btn btn-success form-control get-reddit">Refresh</button>
+			<button data-subreddit="{{subreddit}}" id="open-all-posts-{{subreddit}}" class="btn btn-warning form-control open-all">Open all posts</button>
+			<button data-subreddit="{{subreddit}}" class="btn btn-danger form-control remove-single-subreddit" id="remove-{{subreddit}}">Remove</button>
 		</div>
 	</div>
 </div>
