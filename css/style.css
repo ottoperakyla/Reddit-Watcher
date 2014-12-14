@@ -45,17 +45,19 @@ a:hover{
 	text-decoration: none !important;
 }
 
-#loading-div {
+#subreddits-row {
+	position: relative;
+}
+
+.ajax-spinner {
+	opacity: 0.5;
+	font-size: 100px;
 	position: fixed;
 	z-index: 1000;
-	display: none;
-}
-
-#loading-div i {
-	font-size: 100px;
-}
-
-.thumb {
-	width: 200px;
-	height: 200px;
+	width: 100px;
+	height: 100px;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -50px;
 }
