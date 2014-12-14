@@ -2,6 +2,43 @@
 
     'use strict';
 
+    var ajax = (function() {
+    //define default ajax call settings here
+        var defaultSettings = {};
+
+        function call(url, customSettings) {
+            console.log(arguments);
+            var settings = $.extend({}, defaultSettings, customSettings || {});
+            settings.url = url;
+            
+            var $spinner = $('<i class="ajax-spinner fa fa-refresh fa-spin"></i>');
+            $('body').append($spinner);
+
+            settings.complete = (settings.complete) ? [settings.complete] : [];
+            settings.complete.push(function() {
+                $spinner.remove();
+            });
+
+            return $.ajax(settings);
+        }
+
+        return call;
+    }());
+
+    // how to use:
+    var customSettings = {
+        beforeSend: function(){
+            console.log("before send");
+        },
+        complete: function(){
+            console.log("done with ajax req");
+        }
+    };
+    ajax('http://www.reddit.com/r/all/hot.json', customSettings).done(function(subreddit_json) {
+        console.log('ajax received', subreddit_json);
+    });
+
+
     // set up spinning animation
     // to show when data is being loaded
     $.ajaxSetup({
